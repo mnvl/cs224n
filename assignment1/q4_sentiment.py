@@ -50,7 +50,7 @@ def getSentenceFeatures(tokens, wordVectors, sentence):
 
     ### YOUR CODE HERE
     indices = np.array([tokens[word] for word in sentence])
-    sentVector = np.mean(wordVectors[indices])
+    sentVector = np.mean(wordVectors[indices], axis = 0)
     ### END YOUR CODE
 
     assert sentVector.shape == (wordVectors.shape[1],)
@@ -90,7 +90,7 @@ def chooseBestModel(results):
     ### YOUR CODE HERE
     best_dev_accuracy = 0.
     for result in results:
-        dev_accuracy = results["dev"]
+        dev_accuracy = result["dev"]
 
         if dev_accuracy > best_dev_accuracy:
             best_dev_accuracy = dev_accuracy
