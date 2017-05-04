@@ -146,11 +146,12 @@ class SequencePredictor(Model):
         # is True.
         # - Remember to set self.grad_norm
         grads_and_vars = optimizer.compute_gradients(loss)
+        grads, vars = zip(*grads_and_vars)
         if self.config.clip_gradients:
-            clipped_grads = tf.clip_by_global_norm([grad for grad, var in grads_and_vars], self.config.max_grad_norm)
-            grads_and_vars = [(clipped_grad, var) for clipped_grad, (grad, var) in zip(clipped_grads, grads_and_vars)]
-        self.grad_norm = tf.global_norm([grad for grad, var in grads_and_vars])
-        train_op = optimizer.apply_gradients(grads_and_vars)
+            grads, self.grad_norm = tf.clip_by_global_norm(grads, self.config.max_grad_norm)
+        else:
+            self.grad_norm = tf.global_norm(grads)
+        train_op = optimizer.apply_gradients(zip(grads, vars))
         ### END YOUR CODE
 
         assert self.grad_norm is not None, "grad_norm was not set properly!"
